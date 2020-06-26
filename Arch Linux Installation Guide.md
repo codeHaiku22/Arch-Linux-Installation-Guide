@@ -52,14 +52,14 @@ Verify if UEFI mode is enabled by checking for the existence of this directory:
 Below are recommended partition schemes:
 
 ### UEFI
-Mount Point | Partition | Parition Type | PartitionS ize | File System
+Mount Point | Partition | Parition Type | Partition Size | File System
 ------------|-----------|---------------|----------------|------------    
 /mnt/boot or mnt/efi | /dev/sda1 | EFI System Parition | 260MB - 512MB | fat32
 /mnt | /dev/sda2 | Linux x86-64 root (/) | Remainder of the device | ext4
 [SWAP] | /dev/sda3 | Linux swap |  More than 512MiB | ext4
 
 ### NON-UEFI
-Mount Point | Partition | Parition Type | PartitionS ize | File System
+Mount Point | Partition | Parition Type | Partition Size | File System
 ------------|-----------|---------------|----------------|------------   
 /mnt | /dev/sda1 | Linux | Remainder of the device | ext4 
 [SWAP] |  /dev/sda2 | Linux swap | More than 512 MiB | ext4
