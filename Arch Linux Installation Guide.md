@@ -1,13 +1,21 @@
 ![ArchLinux Logo](https://www.archlinux.org/static/logos/archlinux-logo-dark-90dpi.ebdee92a15b3.png)
 
-# Installation Guide
+# The Arch Linux Installation Guide
+Deep Grewal - December 8, 2020
+
+Although there are many guides that discuss the steps needed to install Arch Linux, I couldn't resist writing my very own guide.  The goals of this guide are to be streamlined, concise, and to keep it simple (in the spirit of the Arch philosophy).  The installation of Arch has been and continues to be a rite of passage within the Linux community.  I hope that this guide can help you succeed with this rite and put you in control of a system that you have built from the ground up.
+
+As an Arch user, the [Arch Wiki](https://wiki.archlinux.org/) will be an extremely valuable resource to you.  This resource is so well-composed and maintained that even non-Arch users glean knowledge, wisdom, and solutions from it daily.  
+
+And now, may the adventure begin...
+
 ## Download ISO
 Click [here](https://www.archlinux.org/download) or visit the link below to download the latest ISO image file for Arch.
 
 [https://www.archlinux.org/download](https://www.archlinux.org/download)
 
 ## Prepare Live Bootable USB
-The simplest way to prepare a live USB is via the ```dd``` command:
+The simplest way to prepare a live USB is via the `dd` command:
 ```bash
 # dd if=/location/of/iso/file of=/device/entry/of/usb/drive
 ```
@@ -175,7 +183,7 @@ Set up root passwd:
 ```bash
 # passwd
 ```
-## Install Grand Universal Bootloader (GRUB)
+## Install Grand Unified Bootloader (GRUB)
 ### UEFI
 Install required packages:
 ```bash
