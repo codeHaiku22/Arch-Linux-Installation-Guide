@@ -95,7 +95,6 @@ Now, we can list all existing disk and disk partitions.  For the purposes of thi
 ```
 root@archiso ~ # fdisk -l
 Disk /dev/sda: 20 GiB, 21474836480 bytes, 41943040 sectors
-Disk model: VBOX HARDDISK
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
@@ -201,7 +200,6 @@ Before we save our changes and commit them to the disk, let's take a moment to v
 ```
 Command (m for help): p
 Disk /dev/sda: 20 GiB, 21474836480 bytes, 41943040 sectors
-Disk model: VBOX HARDDISK
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
@@ -251,7 +249,7 @@ Also, let's prepare the swap partition.
 
 ```
 root@archiso ~ # mkswap /dev/sda2
-Setting up swap space version 1, size = 511 MiB (535818240 bytes)
+Setting up swapspace version 1, size = 511 MiB (535818240 bytes)
 no label, UUID=12e273d1-4dc4-4151-9ffe-6a09ae78be38
 
 root@archiso ~ # swapon /dev/sda2
@@ -312,16 +310,16 @@ Net Upgrade Size:      0.00 MiB
 :: Proceed with installation? [Y/n] Y
 :: Retrieving packages...
  reflector-2020.12.20.1-1-any     25.9 KiB 0.00   B/s 00:00 [#################################] 100%
- (1/1) checking keys in keyring                             [#################################] 100%
- (1/1) checking package integrity                           [#################################] 100%
- (1/1) loading package files                                [#################################] 100%
- (1/1) checking for file conflicts                          [#################################] 100%
- (1/1) checking available disk space                        [#################################] 100%
- :: Processing package changes...
- (1/1) reinstalling reflector                               [#################################] 100%
- :: Running post-transaction hooks...
- (1/2) Reloading system manager configuration...
- (2/2) Arming ConditionNeedsUpdate... 
+(1/1) checking keys in keyring                              [#################################] 100%
+(1/1) checking package integrity                            [#################################] 100%
+(1/1) loading package files                                 [#################################] 100%
+(1/1) checking for file conflicts                           [#################################] 100%
+(1/1) checking available disk space                         [#################################] 100%
+:: Processing package changes...
+(1/1) reinstalling reflector                                [#################################] 100%
+:: Running post-transaction hooks...
+(1/2) Reloading system manager configuration...
+(2/2) Arming ConditionNeedsUpdate... 
 ```
 It seems that `reflector` was already up to date, but we went ahead and installed it again for the sake of this guide.
 
@@ -337,8 +335,6 @@ Execute the `reflector` command to optimize the "mirrorlist" file.  The end resu
 
 ```
 root@archiso ~ # reflector -c "US" -f 12 -l 10 -n 12 --save /etc/pacman.d/mirrorlist
-[2021-01-09 00:00:33] WARNING: failed to rate http(s) download (http://arch.mirror.square-r00t.net/community/os/x86_64/community.db): Download timed out after 5 second(s).
-[2021-01-09 00:00:47] WARNING: failed to rate http(s) download (http://arch.mirror.constant.com/community/os/x86_64/community.db): Download timed out after 5 second(s).
 ```
 ___
 ## Install Arch Linux
@@ -364,12 +360,12 @@ ___
 During the configuration phase, we will start things off by setting the root partition to mount automatically.  Then, we will set the timezone so that it reflects the current/local timezone.  Next, we will set the locale so that dates, times, numbers, etc. are formatted correctly based on the geographical locale of the machine. Also, we can take this opportunity to make some minor network configurations so that this machine has a proper and accurate identity on the network.  Finally, we can enhance the security of the machine by setting a password for the root user.
 
 ### Automating the Mounts
-Let's create the `/etc/fstab` so that the root partition is mounted automatically when the system is booted.  This `/etc/fstab` file can be edited manually, but our goal is to simplify the installation of Arch Linux.  Similar to what we did with the `reflector` tool to automate the optimal mirror selection process, we will introduce and use yet another tool to create the `/etc/fstab` file.
+Let's create the `/etc/fstab` so that the root partition is mounted automatically when the system is booted.  The `/etc/fstab` file can be edited manually, but our goal is to simplify the installation of Arch Linux.  Similar to what we did with the `reflector` tool to automate the optimal mirror selection process, we will introduce and use yet another tool to create the `/etc/fstab` file.
 
 We can automatically generate the fstab file using the `genfstab` command.
 
 ```
-# genfstab -U /mnt >> /mnt/etc/fstab
+root@archiso ~ # genfstab -U /mnt >> /mnt/etc/fstab
 ```
 
 ### Change Root
@@ -378,141 +374,227 @@ Recall that we initially booted into this machine using an image file.  We are s
 Change root to the root directory at `/mnt`.
 
 ```
-# arch-chroot /mnt
+root@archiso ~ # arch-chroot /mnt
 ```
 
 ### Setting the Timezone
+At the beginning of this guide, we were able to set NTP to true.  This ensured that we had the correct time, but did not ensure that we had the correct timezone.  In this step, we will apply the correct timezone (UTC offset) so that the time represented in our installation is relevant to the geographical location.
 
-Use the `timedatectl` command to find your time zone:
-
-```
-# timedatectl list-timezones
-```
-
-Create a symbollic link to set the timezone (replace "America/Los_Angeles" with your timezone):
+Use the `timedatectl` command to find your timezone.  You can use the `arrow` keys and the `PgUp` and `PgDn` keys to navigate through the list.  Once complete press `q` to exit the list.
 
 ```
-# ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+[root@archiso /]# timedatectl list-timezones
 ```
 
-Run `hwclock` to generate /etc/adjtime:
+Create a symbollic link to set the timezone (replace "America/Los_Angeles" with your timezone).
 
 ```
-# hwclock --systohc
+[root@archiso /]# ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+```
+
+Run `hwclock` to generate `/etc/adjtime`.
+
+```
+[root@archiso /]# hwclock --systohc
 ```
 
 ### Setting Up Locale
-_**NOTE:** Locale refers to language, number, date and currency formats  The file /etc/locale.gen contains locale settings and system languages and is commented by default._
+The term "locale" refers to language, number, date and currency formats  The file `/etc/locale.gen` contains locale settings and system languages and is commented by default.  We must open this file using a text editor and uncomment the line which contains the desired locale.  This is why `nano` was installed previously using the `pacstrap` command.
 
-Open the file and remove the "#" from the start of the line which contains your locale:
-```
-# nano /etc/locale.gen
-```
-This entry has been uncommented:
-> en_US.UTF-8  
+Open the `/etc/locale.gen` file and remove the "#" from the start of the line which contains your locale.  Then, save the file.
 
-Generate the /etc/locale.conf file:
 ```
-# locale-gen
-# echo LANG=en_US.UTF-8  > /etc/locale.conf
-# export LANG=en_US.UTF-8 
+[root@archiso /]# nano /etc/locale.gen
 ```
+
+Since I am in the United States, the following entry has been uncommented prior to saving the file and the locale of `en_US.UTF-8` will be used for the remainder of the steps.
+
+> en_US.UTF-8 UTF-8 
+
+Generate the `/etc/locale.conf` file.
+
+```
+[root@archiso /]# locale-gen
+Generating locales...
+  en_US.UTF-8... done
+Generation complete
+```
+
+Create and set the `LANG` variable. 
+
+```
+[root@archiso /]# echo LANG=en_US.UTF-8  > /etc/locale.conf
+[root@archiso /]# export LANG=en_US.UTF-8 
+```
+
 ### Network Configuration
-Create the /etc/hostname file and add the hostname entry:
+Let's use that text editor once more to give our machine a hostname and proper identity on the network.
+
+Create the `/etc/hostname` file and add the hostname entry.  Then, save the file.
+
 ```
-# nano /etc/hostname
+[root@archiso /]# nano /etc/hostname
 ```
+
 This entry has been added:
+
 > ArchLinuxPC
 
-Create the /etc/hosts file and add the proper entries:
+Create the /etc/hosts file and add the proper entries.  Then, save the file.
+
 ```
-# nano /etc/hosts
+[root@archiso /]# nano /etc/hosts
 ```
 These entries have been added:
+
 > 127.0.0.1	localhost\
 > ::1		localhost\
 > 127.0.1.1	ArchLinuxPC
 
 ### Root Password
-Set up root passwd:
+Finally, let's give the root user a password for the sake of security.
+
+Use the `passwd` command to set the password for root.
+
 ```
-# passwd
+[root@archiso /]# passwd
+New password:
+Retype new password:
+passwd: password updated successfully
 ```
 ___
 ## Install Grand Unified Bootloader (GRUB)
-### UEFI
-Install required packages:
-```
-# pacman -S grub efibootmgr
-```
-Create the directory where EFI partition will be mounted:
-```
-# mkdir /boot/efi
-```
-Mount the ESP partition:
-```
-# mount /dev/sda1 /boot/efi
-```
-Install GRUB:
-```
-# grub-install --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/boot/efi
-```
-Generate the /boot/grub/grub.cfg file:
-```
-# grub-mkconfig -o /boot/grub/grub.cfg
-```
+Up to this point, we have created a functional Arch Linux system.  It has been installed on the root partition, but a bootloader is needed to properly and automatically load our newly installed system.  There are a few choices when it comes to bootloaders.  I have chosen to use GRUB as the bootloader of choice for this guide.  
+
+Once again, we have two general methods of installing a bootloader: the UEFI and non-UEFI methods.
+
+Again depending on the type of system (UEFI, non-UEFI), the process will vary.
+
 ### NON-UEFI
-Install required package:
+For our non-UEFI system, the process is shown below.
+
+Install the `grub` package.
+
 ```
-# pacman -S grub
+[root@archiso /]# pacman -S grub
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (1) grub-2:2.04-8
+
+Total Download Size:    6.74 MiB
+Total Installed Size:  32.91 MiB
+
+:: Proceed with installation? [Y/n] Y
+:: Retrieving packages...
+ grub-2:2.04-8-x86_64              6.7 MiB 6.97 MiB/s 00:01 [#################################] 100%
+(1/1) checking keys in keyring                              [#################################] 100%
+(1/1) checking package integrity                            [#################################] 100%
+(1/1) loading package files                                 [#################################] 100%
+(1/1) checking for file conflicts                           [#################################] 100%
+(1/1) checking available disk space                         [#################################] 100%
+:: Processing package changes...
+(1/1) installing grub                                       [#################################] 100%
+Generate your bootloader configuration with:
+  grub-mkconfig -o /boot/grub/grub.cfg
+Optional dependencies for grub
+    freetype2: For grub-mkfont usage
+    fuse2: For grub-mount usage
+    dosfstools: For grub-mkrescue FAT FS and EFI support
+    efibootmgr: For grub-install EFI support   
+    libisoburn: Provides xorriso for generating grub rescue iso using grub-mkrescue
+    os-prober: To detect other OSes when generating grub.cfg in BIOS systems
+    mtools: For grub-mkrescue FAT FS support
+:: Running post-transaction hooks...
+(1/1) Arming ConditionNeedsUpdate... 
 ```
-Install GRUB:
+
+Install GRUB to the hard disk.
+
 ```
-# grub-install /dev/sda
+[root@archiso /]# grub-install /dev/sda
+Installing for i386-pc platform.
+Installation finished. No error reported.
 ```
-Generate the /boot/grub/grub.cfg file:
+
+Finally, generate the `/boot/grub/grub.cfg` file.
+
 ```
-# grub-mkconfig -o /boot/grub/grub.cfg
+[root@archiso /]# grub-mkconfig -o /boot/grub/grub.cfg
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-linux
+Found initrd image: /boot/initramfs-linux.img
+Found fallback initrd image(s) in /boot: initramfs-linux-fallback.img
+done
+```
+
+### UEFI
+Install the `grub` package.
+
+```
+[root@archiso /]# pacman -S grub efibootmgr
+```
+
+Create the directory where EFI partition will be mounted.
+
+```
+[root@archiso /]# mkdir /boot/efi
+```
+
+Mount the ESP partition.
+
+```
+[root@archiso /]# mount /dev/sda1 /boot/efi
+```
+
+Install GRUB to the hard disk.
+
+```
+[root@archiso /]# grub-install --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/boot/efi
+```
+
+Finally, generate the `/boot/grub/grub.cfg` file.
+
+```
+[root@archiso /]# grub-mkconfig -o /boot/grub/grub.cfg
 ```
 ___
 ## Install a Desktop Environment
 
-If you thought swap partition sizes and text editors were controversial, they don't compare to the tribalism that exists for desktop environments.  But that's what makes Linux amazing: the freedom to choose.  There are many desktop environments that can be used with Arch Linux.  The most popular (at the time of this writing) have been included below. 
+If you thought swap partition sizes and text editors were controversial, they don't compare to the tribalism that exists for desktop environments.  But that's what makes Linux amazing: the freedom to choose.  There are many desktop environments that can be used with Arch Linux.  The most popular, at the time of this writing, have been included below (and even that is a controversial statement: "most popular"). 
 
-Choose your desktop environment, perform the installation, and finalize the configuration.  Then, let's reconnect in the Summary section of this tutorial.
+Choose your desktop environment, perform the installation, and finalize the configuration.  If you are unsure about the options presented during the installation of your desktop environment of choice, choose the defaulted options.  Then, let's reconnect in the Summary section of this tutorial.
 
 ### GNOME
 Install the Xorg display server.
 
 ```
-# pacman -S xorg
+[root@archiso /]# pacman -S xorg
 ```
 
 Install the GNOME desktop environment.
 
 ```
-# pacman -S gnome
+[root@archiso /]# pacman -S gnome
 ```
 
 Enable the GDM display manager and Network Manager.
 
 ```
-# systemctl start gdm.service
-# systemctl enable gdm.service
-# systemctl enable NetworkManager.service
+[root@archiso /]# systemctl enable gdm.service
+[root@archiso /]# systemctl enable NetworkManager.service
 ```
 
 Exit from chroot.
 
 ```
-# exit
+[root@archiso /]# exit
 ```
 
 Shutdown.
 
 ```
-# shutdown now
+root@archiso ~ # shutdown now
 ```
 
 Remove the live USB/medium and power back on.
@@ -522,44 +604,44 @@ Remove the live USB/medium and power back on.
 Install the Xorg display server.
 
 ```
-# pacman -S xorg
+[root@archiso /]# pacman -S xorg
 ```
 
 Install the Xorg terminal.
 
 ```
-# pacman -S xterm
+[root@archiso /]# pacman -S xterm
 ```
 
 Install the Cinnamon desktop environment.
 
 ```
-# pacman -S cinnamon
+[root@archiso /]# pacman -S cinnamon
 ```
 
 Install the GDM display manager.
 
 ```
-# pacman -S gdm
+[root@archiso /]# pacman -S gdm
 ```
 
 Enable the GDM display manager and Network Manager.
 
 ```
-# systemctl enable gdm.service
-# systemctl enable NetworkManager.service
+[root@archiso /]# systemctl enable gdm.service
+[root@archiso /]# systemctl enable NetworkManager.service
 ```
 
 Exit from chroot.
 
 ```
-# exit
+[root@archiso /]# exit
 ```
 
 Shutdown.
 
 ```
-# shutdown now
+root@archiso ~ # shutdown now
 ```
 
 Remove the live USB/medium and power back on.
@@ -570,19 +652,19 @@ _**NOTE:** KDE doesn’t allow the root user to login directly. Create a new use
 Use the `useradd` command with the `-m` option to create a new user and the home directory for the new user.
 
 ```
-# useradd -m deep
+[root@archiso /]# useradd -m deep
 ```
 
 Set up user password.
 
 ```
-# passwd deep
+[root@archiso /]# passwd deep
 ```
 
 Install the `sudo` command.
 
 ```
-# pacman -S sudo
+[root@archiso /]# pacman -S sudo
 ```
 
 _**NOTE:** The configuration file for `sudo` is `/etc/sudoers`.  This file should always be edited with the `visudo` command.  The `visudo` command locks the "sudoers" file, saves edits to a temporary file, and then checks the file’s syntax before copying it to `/etc/sudoers`.)_
@@ -590,7 +672,7 @@ _**NOTE:** The configuration file for `sudo` is `/etc/sudoers`.  This file shoul
 Set an editor for use when launching `visudo`.
 
 ```
-# EDITOR=nano visudo
+[root@archiso /]# EDITOR=nano visudo
 ```
 
 Add the following line for the newly created user.
@@ -600,35 +682,37 @@ Add the following line for the newly created user.
 Install the Xorg display server.
 
 ```
-# pacman -S xorg
+[root@archiso /]# pacman -S xorg
 ```
 
 Install `plasma`, `plasma-wayland-session`, and `kde-applications`.
 
 ```
-# pacman -S plasma plasma-wayland-session kde-applications 
+[root@archiso /]# pacman -S plasma plasma-wayland-session kde-applications 
 ```
 
 Enable the SDDM display manager and Network Manager.
 
 ```
-# systemctl enable sddm.service
-# systemctl enable NetworkManager.service
+[root@archiso /]# systemctl enable sddm.service
+[root@archiso /]# systemctl enable NetworkManager.service
 ```
 
 Exit from chroot.
 
 ```
-# exit
+[root@archiso /]# exit
 ```
 
 Shutdown.
 
 ```
-# shutdown now
+root@archiso ~ # shutdown now
 ```
 
 Remove the live USB/medium and power back on.
 ___
 ## Summary
-Congratulations! You now have a working Arch Linux system which you have designed based on your choices and preferences.  The journey of a thousand miles has just begun with one step.  There is much more to install, configure, tweak, and learn.  I hope that you have enjoyed this guide and have gained some insight into the installation of Arch Linux.  You can now boast to your friends and colleagues about your distro of choice.  Don't hesitate to sprinkle in the occasional, "By the way, I use Arch" in casual conversations.  For more information 
+Congratulations! You now have a working Arch Linux system which you have designed based on your choices and preferences.  Arch, by default, is a rolling-release distribution.  This means that you shouldn't have to install it more than once for any system.  One of the benefits (and drawbacks) of being a rolling release like Arch, is that you are always on the cutting edge (and sometimes bleeding edge) of system and software updates which, at times, can be unstable.  Arch is an excellent distribution for a personal workstation or development machine.  However, you should avoid deploying Arch on critical machines which are intended to run in a production environment.  If (or when) you run into trouble, the [Arch Wiki](https://wiki.archlinux.org/) will be an excellent source of any further configuration, troubleshooting, or general/specific knowledge about a given topic.
+
+This was just the beginning; there is much more to install, configure, tweak, and learn.  I hope that you have enjoyed this guide and have gained some insight into the installation of Arch Linux.  You can now boast to your friends and colleagues about your distro of choice.  Don't hesitate to sprinkle in the occasional, "By the way, I use Arch" in casual conversations.  
