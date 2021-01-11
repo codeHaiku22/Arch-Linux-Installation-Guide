@@ -24,17 +24,17 @@ Depending upon the type of system that Arch will be installed on, there are diff
 ### Physical Machine
 For physical machines, a bootable medium can be created from the Arch ISO file. 
 
-#### Step 1: Prepare Live Bootable USB
+#### Prepare Live Bootable USB
 Although an optical disk could have been used to create a bootable physical medium, USB was chosen due to its relevance.  The simplest way to prepare a live USB is via the `dd` command:
 
 ```
 # dd if=/location/of/iso/file of=/device/entry/of/usb/drive
 ```
 
-#### Step 2: Boot to USB
+#### Boot to USB
 Insert the USB drive into the physical machine and boot into the USB drive.  BIOS settings/boot order may need to be adjusted to ensure that the physical machine boots from the USB drive.
 
-#### Step 3: Confirm You are In
+#### Confirm You are In
 Once you have properly booted into the Arch ISO, a prompt similar to the one below will be displayed.  
 
 ```
@@ -468,8 +468,6 @@ Up to this point, we have created a functional Arch Linux system.  It has been i
 
 Once again, we have two general methods of installing a bootloader: the UEFI and non-UEFI methods.
 
-Again depending on the type of system (UEFI, non-UEFI), the process will vary.
-
 ### NON-UEFI
 For our non-UEFI system, the process is shown below.
 
@@ -675,7 +673,7 @@ Set an editor for use when launching `visudo`.
 [root@archiso /]# EDITOR=nano visudo
 ```
 
-Add the following line for the newly created user.
+Add the following line for the newly created user.  Then, save the file.
 
 > deep ALL=(ALL) ALL
 
