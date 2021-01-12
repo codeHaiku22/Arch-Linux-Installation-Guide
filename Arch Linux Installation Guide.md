@@ -153,12 +153,16 @@ First, let's create the Linux partition (`/dev/sda1/`).
 
 ```
 Command (m for help): n
+
 Partition type
    p   primary (0 primary, 0 extended, 4 free)
    e   extended (container for logical partitions)
 Select (default p): p   
+
 Partition number (1-4, default 1): 1
+
 First sector (2048-41943039, default 2048): 2048
+
 Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-41943049, default 41943039): +19.5G
 
 Created a new partition of type 'Linux' and of size 19.5 GiB.
@@ -169,12 +173,16 @@ Next, let's go ahead and create the Linux swap partition (`/dev/sda2/`).
 
 ```
 Command (m for help): n
+
 Partition type
    p   primary (1 primary, 0 extended, 3 free)
    e   extended (container for logical partitions)
 Select (default p): p   
+
 Partition number (2-4, default 2): 2
+
 First sector (40896512-41943039, default 40896512): 40896512
+
 Last sector, +/-sectors or +/-size{K,M,G,T,P} (40896512-41943039, default 41943039): 41943039
 
 Created a new partition 2 of type 'Linux' and of size 511 MiB.
@@ -188,7 +196,9 @@ We now need to change the partition type of our intended Linux swap partition (`
 
 ```
 Command (m for help): t
+
 Partition number (1,2, default 2): 2
+
 Hex code or alias (type L to list all): 82
 
 Changed type of partition 'Linux' to 'Linux swap / Solaris'.
@@ -292,7 +302,7 @@ root@archiso ~ # pacman -Syy
 ```
 
 ### Install reflector
-With a fully-updated repository, we are in good-standing to install the `reflector` tool so that we can optimize the "mirrorlist" file for local mirrors.  
+With a fully-updated repository, we are in good-standing to install the `reflector` tool so that we can optimize the `/etc/pacman.d/mirrorlist` file for local mirrors.  
 
 ```
 root@archiso ~ # pacman -S reflector
@@ -324,14 +334,14 @@ Net Upgrade Size:      0.00 MiB
 It seems that `reflector` was already up to date, but we went ahead and installed it again for the sake of this guide.
 
 ### Back up Existing Mirrorlist File
-It doesn't hurt to make a backup of a file that is going to be changed.  Let's make backup of the "mirrorlist" file.
+It doesn't hurt to make a backup of a file that is going to be changed.  Let's make a backup of the `/etc/pacman.d/mirrorlist` file.
 
 ```
 root@archiso ~ # cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 ```
 
 ### Run reflector Against the Mirrorlist File
-Execute the `reflector` command to optimize the "mirrorlist" file.  The end result will be a leaner file which contains the most optimal entries.  Since I am in the United States, I have used "US" as the country code within the command.
+Execute the `reflector` command to optimize the `/etc/pacman.d/mirrorlist` file.  The end result will be a leaner file which contains the most optimal entries.  Since I am in the United States, I have used "US" as the country code within the command.
 
 ```
 root@archiso ~ # reflector -c "US" -f 12 -l 10 -n 12 --save /etc/pacman.d/mirrorlist
