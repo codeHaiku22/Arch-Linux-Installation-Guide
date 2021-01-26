@@ -1,7 +1,7 @@
 ![ArchLinux Logo](https://www.archlinux.org/static/logos/archlinux-logo-dark-90dpi.ebdee92a15b3.png)
 
 # The Arch Linux Installation Guide
-Deep Grewal - January 8, 2021
+Deep Grewal - January 27, 2021
 
 ___
 ## Introduction
