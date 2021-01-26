@@ -353,8 +353,14 @@ Our system has now been prepared and optimized to take on the install of Arch Li
 ### Mount the Linux Partition
 We must mount the root directory before we can perform any installation.
 
+#### NON-UEFI
 ```
 root@archiso ~ # mount /dev/sda1 /mnt
+```
+
+#### UEFI
+```
+root@archiso ~ # mount /dev/sda2 /mnt
 ```
 
 ### Perform the Installation
@@ -419,7 +425,11 @@ Open the `/etc/locale.gen` file and remove the "#" from the start of the line wh
 
 Since I am in the United States, the following entry has been uncommented prior to saving the file and the locale of `en_US.UTF-8` will be used for the remainder of the steps.
 
-> en_US.UTF-8 UTF-8 
+```
+# /etc/locale.gen
+
+en_US.UTF-8 UTF-8 
+```
 
 Generate the `/etc/locale.conf` file.
 
@@ -448,8 +458,11 @@ Create the `/etc/hostname` file and add the hostname entry.  Then, save the file
 
 This entry has been added:
 
-> ArchLinuxPC
+```
+# /etc/hostname
 
+ArchLinuxPC
+```
 Create the /etc/hosts file and add the proper entries.  Then, save the file.
 
 ```
@@ -457,10 +470,13 @@ Create the /etc/hosts file and add the proper entries.  Then, save the file.
 ```
 These entries have been added:
 
-> 127.0.0.1	localhost\
-> ::1		localhost\
-> 127.0.1.1	ArchLinuxPC
+```
+# /etc/hosts
 
+127.0.0.1	localhost\
+::1		    localhost\
+127.0.1.1	ArchLinuxPC
+```
 ### Root Password
 Finally, let's give the root user a password for the sake of security.
 
@@ -635,6 +651,8 @@ Install the GDM display manager.
 
 Enable the GDM display manager and Network Manager.
 
+_**NOTE:** During the login process, look for a settings (gear) icon.  This icon will allow you to choose the Cinammon desktop environment._
+
 ```
 [root@archiso /]# systemctl enable gdm.service
 [root@archiso /]# systemctl enable NetworkManager.service
@@ -685,7 +703,11 @@ Set an editor for use when launching `visudo`.
 
 Add the following line for the newly created user.  Then, save the file.
 
-> deep ALL=(ALL) ALL
+```
+# /etc/sudoers
+
+deep ALL=(ALL) ALL
+```
 
 Install the Xorg display server.
 
