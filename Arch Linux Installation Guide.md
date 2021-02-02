@@ -473,9 +473,9 @@ These entries have been added:
 ```
 # /etc/hosts
 
-127.0.0.1	localhost
-::1         localhost
-127.0.1.1	ArchLinuxPC
+127.0.0.1 localhost
+::1 localhost
+127.0.1.1 ArchLinuxPC
 ```
 ### Root Password
 Finally, let's give the root user a password for the sake of security.
