@@ -443,7 +443,7 @@ Generation complete
 Create and set the `LANG` variable. 
 
 ```
-[root@archiso /]# echo LANG=en_US.UTF-8  > /etc/locale.conf
+[root@archiso /]# echo LANG=en_US.UTF-8 > /etc/locale.conf
 [root@archiso /]# export LANG=en_US.UTF-8 
 ```
 
@@ -473,8 +473,8 @@ These entries have been added:
 ```
 # /etc/hosts
 
-127.0.0.1	localhost\
-::1		    localhost\
+127.0.0.1	localhost
+::1		    localhost
 127.0.1.1	ArchLinuxPC
 ```
 ### Root Password
@@ -582,12 +582,51 @@ Finally, generate the `/boot/grub/grub.cfg` file.
 ```
 [root@archiso /]# grub-mkconfig -o /boot/grub/grub.cfg
 ```
+
+___
+## Create a User Account
+This is an excellent opportunity to create a user account.  A non-root account is a preferred method of logging into the graphical desktop environment that we will install in the next section.  The method of creation for the user account will automatically create the home directory for the user as well.  In addition, we can give this account sudo privileges.  For that, we will also need to install the `sudo` command, itself.  
+
+Use the `useradd` command with the `-m` option to create a new user and to generate the home directory for the new user.
+
+```
+[root@archiso /]# useradd -m deep
+```
+
+Set up user password.
+
+```
+[root@archiso /]# passwd deep
+```
+
+Install the `sudo` command.
+
+```
+[root@archiso /]# pacman -S sudo
+```
+
+_**NOTE:** The configuration file for `sudo` is `/etc/sudoers`.  This file should always be edited with the `visudo` command.  The `visudo` command locks the "sudoers" file, saves edits to a temporary file, and then checks the file’s syntax before copying it to `/etc/sudoers`.)_
+
+Set an editor for use when launching `visudo`.
+
+```
+[root@archiso /]# EDITOR=nano visudo
+```
+
+Add the following line for the newly created user.  Then, save the file.
+
+```
+# /etc/sudoers
+
+deep ALL=(ALL) ALL
+```
 ___
 ## Install a Desktop Environment
-
-If you thought swap partition sizes and text editors were controversial, they don't compare to the tribalism that exists for desktop environments.  But that's what makes Linux amazing: the freedom to choose.  There are many desktop environments that can be used with Arch Linux.  The most popular, at the time of this writing, have been included below (and even that is a controversial statement: "most popular"). 
+If you thought swap partition sizes and text editors were controversial, they don't compare to the tribalism that exists for desktop environments.  But that's what makes Linux amazing: the freedom to choose.  There are many desktop environments that can be used with Arch Linux.  My favorite desktop environments have been included below (in no particular order). 
 
 Choose your desktop environment, perform the installation, and finalize the configuration.  If you are unsure about the options presented during the installation of your desktop environment of choice, choose the defaulted options.  Then, let's reconnect in the Summary section of this tutorial.
+
+_**NOTE:** KDE doesn’t allow the root user to login directly. You must initially login with the user account created in the previous section._
 
 ### GNOME
 Install the Xorg display server.
@@ -673,42 +712,6 @@ root@archiso ~ # shutdown now
 Remove the live USB/medium and power back on.
 
 ### KDE
-_**NOTE:** KDE doesn’t allow the root user to login directly. Create a new user and grant sudo rights._
-
-Use the `useradd` command with the `-m` option to create a new user and the home directory for the new user.
-
-```
-[root@archiso /]# useradd -m deep
-```
-
-Set up user password.
-
-```
-[root@archiso /]# passwd deep
-```
-
-Install the `sudo` command.
-
-```
-[root@archiso /]# pacman -S sudo
-```
-
-_**NOTE:** The configuration file for `sudo` is `/etc/sudoers`.  This file should always be edited with the `visudo` command.  The `visudo` command locks the "sudoers" file, saves edits to a temporary file, and then checks the file’s syntax before copying it to `/etc/sudoers`.)_
-
-Set an editor for use when launching `visudo`.
-
-```
-[root@archiso /]# EDITOR=nano visudo
-```
-
-Add the following line for the newly created user.  Then, save the file.
-
-```
-# /etc/sudoers
-
-deep ALL=(ALL) ALL
-```
-
 Install the Xorg display server.
 
 ```
