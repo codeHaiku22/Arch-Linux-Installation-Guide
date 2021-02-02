@@ -74,6 +74,10 @@ Now that we have confirmed connectivity to the Internet, we can leverage NTP.  U
 
 ``` 
 root@archiso ~ # timedatectl set-ntp true
+Starting Network Time Synchronization...
+[  OK  ] Started Network Time Synchronization.
+[  OK  ] Reached target System Time Set.
+[  OK  ] Reached target System Time Synchronized.
 ```
 ___
 ## Disk Partitioning
@@ -306,32 +310,29 @@ With a fully-updated repository, we are in good-standing to install the `reflect
 
 ```
 root@archiso ~ # pacman -S reflector
-
-warning: reflector-2020.12.20.1-1 is up to date -- reinstalling
 resolving dependencies...
 looking for conflicting packages...
 
-Packages (1) reflector-2020.12.20.1-1
+Packages (1) reflector-2021-1
 
 Total Download Size:   0.03 MiB
-Total Installed Size:  0.09 MiB
-Net Upgrade Size:      0.00 MiB
+Total Installed Size:  0.10 MiB
+Net Upgrade Size:      0.01 MiB
 
 :: Proceed with installation? [Y/n] Y
 :: Retrieving packages...
- reflector-2020.12.20.1-1-any     25.9 KiB 0.00   B/s 00:00 [#################################] 100%
+ reflector-2021-1-any             25.9 KiB 0.00   B/s 00:00 [#################################] 100%
 (1/1) checking keys in keyring                              [#################################] 100%
 (1/1) checking package integrity                            [#################################] 100%
 (1/1) loading package files                                 [#################################] 100%
 (1/1) checking for file conflicts                           [#################################] 100%
 (1/1) checking available disk space                         [#################################] 100%
 :: Processing package changes...
-(1/1) reinstalling reflector                                [#################################] 100%
+(1/1) upgrading reflector                                   [#################################] 100%
 :: Running post-transaction hooks...
 (1/2) Reloading system manager configuration...
 (2/2) Arming ConditionNeedsUpdate... 
 ```
-It seems that `reflector` was already up to date, but we went ahead and installed it again for the sake of this guide.
 
 ### Back up Existing Mirrorlist File
 It doesn't hurt to make a backup of a file that is going to be changed.  Let's make a backup of the `/etc/pacman.d/mirrorlist` file.
@@ -437,7 +438,7 @@ Generate the `/etc/locale.conf` file.
 [root@archiso /]# locale-gen
 Generating locales...
   en_US.UTF-8... done
-Generation complete
+Generation complete.
 ```
 
 Create and set the `LANG` variable. 
@@ -585,26 +586,56 @@ Finally, generate the `/boot/grub/grub.cfg` file.
 
 ___
 ## Create a User Account
-This is an excellent opportunity to create a user account.  A non-root account is a preferred method of logging into the graphical desktop environment that we will install in the next section.  The method of creation for the user account will automatically create the home directory for the user as well.  In addition, we can give this account sudo privileges.  For that, we will also need to install the `sudo` command, itself.  
+This is an excellent opportunity to create a user account.  A non-root account is a preferred method of logging into the graphical desktop environment which will be install in the next section.  The method of creation for the user account will automatically create the home directory for the user as well.  In addition, we can give this account sudo privileges.  For that, we will also need to install the `sudo` command, itself.  
 
+### Add User and Home Directory
 Use the `useradd` command with the `-m` option to create a new user and to generate the home directory for the new user.
 
 ```
 [root@archiso /]# useradd -m deep
 ```
 
+### User Password
 Set up user password.
 
 ```
 [root@archiso /]# passwd deep
+New password:
+Retype new password:
+passwd: password updated successfully
 ```
 
+### Install sudo
 Install the `sudo` command.
 
 ```
 [root@archiso /]# pacman -S sudo
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (1) sudo-1.9.5.p2-1
+
+Total Download Size:    1.09 MiB
+Total Installed Size:   4.45 MiB
+
+:: Proceed with installation? [Y/n] Y
+:: Retrieving packages...
+ sudo-1.9.5.p2-1-x86_64         1116.4 KiB 15.6 MiB/s 00:01 [#################################] 100%
+(1/1) checking keys in keyring                              [#################################] 100%
+(1/1) checking package integrity                            [#################################] 100%
+(1/1) loading package files                                 [#################################] 100%
+(1/1) checking for file conflicts                           [#################################] 100%
+(1/1) checking available disk space                         [#################################] 100%
+:: Processing package changes...
+(1/1) installing sudo                                       [#################################] 100%
+:: Running post-transaction hooks...
+(1/3) Reloading system manager configuration...
+Running in chroot, ignoring command 'daemon-reload'
+(2/3) Creating temporary files...
+(3/3) Arming ConditionNeedsUpdate... 
 ```
 
+### Give User sudo Privileges
 _**NOTE:** The configuration file for `sudo` is `/etc/sudoers`.  This file should always be edited with the `visudo` command.  The `visudo` command locks the "sudoers" file, saves edits to a temporary file, and then checks the file’s syntax before copying it to `/etc/sudoers`.)_
 
 Set an editor for use when launching `visudo`.
