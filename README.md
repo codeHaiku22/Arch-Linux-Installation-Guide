@@ -138,7 +138,7 @@ The schemes below are mere recommendations and can be altered to your liking.  N
 Mount Point | Partition | Partition Type | Partition Size | File System
 ------------|-----------|---------------|----------------|------------   
 /mnt | /dev/sda1 | Linux | Remainder of the device | ext4 
-[SWAP] |  /dev/sda2 | Linux swap | More than 512 MB | ext4
+[SWAP] |  /dev/sda2 | Linux swap | More than 512MB | ext4
 
 <br/>
 
