@@ -1,7 +1,9 @@
 ![ArchLinux Logo](https://www.archlinux.org/static/logos/archlinux-logo-dark-90dpi.ebdee92a15b3.png)
 
 # The Arch Linux Installation Guide
-Deep Grewal - January 27, 2021
+Deep Grewal<br>
+Created: January 27, 2021<br>
+Updated: October 16, 2024
 
 ___
 ## Introduction
@@ -136,7 +138,7 @@ The schemes below are mere recommendations and can be altered to your liking.  N
 Mount Point | Partition | Partition Type | Partition Size | File System
 ------------|-----------|---------------|----------------|------------   
 /mnt | /dev/sda1 | Linux | Remainder of the device | ext4 
-[SWAP] |  /dev/sda2 | Linux swap | More than 512 MiB | ext4
+[SWAP] |  /dev/sda2 | Linux swap | More than 512 MB | ext4
 
 <br/>
 
@@ -145,7 +147,7 @@ Mount Point | Partition | Partition Type | Partition Size | File System
 ------------|-----------|---------------|----------------|------------    
 /mnt/boot or mnt/efi | /dev/sda1 | EFI System Partition | 260MB - 512MB | fat32
 /mnt | /dev/sda2 | Linux x86-64 root (/) | Remainder of the device | ext4
-[SWAP] | /dev/sda3 | Linux swap |  More than 512MiB | ext4
+[SWAP] | /dev/sda3 | Linux swap |  More than 512MB | ext4
 
 ### Create the Partitions
 Since we have a non-UEFI system, it makes sense to follow the NON-UEFI partition scheme above.  This means that we will create 2 partitions: a swap partition (Linux swap) and a partition where root will be mounted (Linux).
@@ -586,7 +588,7 @@ Finally, generate the `/boot/grub/grub.cfg` file.
 
 ___
 ## Create a User Account
-This is an excellent opportunity to create a user account.  A non-root account is a preferred method of logging into the graphical desktop environment which will be install in the next section.  The method of creation for the user account will automatically create the home directory for the user as well.  In addition, we can give this account sudo privileges.  For that, we will also need to install the `sudo` command, itself.  
+This is an excellent opportunity to create a user account.  A non-root account is a preferred method of logging into the graphical desktop environment which will be installed in the next section.  The method of creation for the user account will automatically create the home directory for the user as well.  In addition, we can give this account sudo privileges.  For that, we will also need to install the `sudo` command, itself.  
 
 ### Add User and Home Directory
 Use the `useradd` command with the `-m` option to create a new user and to generate the home directory for the new user.
@@ -636,7 +638,9 @@ Running in chroot, ignoring command 'daemon-reload'
 ```
 
 ### Give User sudo Privileges
-_**NOTE:** The configuration file for `sudo` is `/etc/sudoers`.  This file should always be edited with the `visudo` command.  The `visudo` command locks the "sudoers" file, saves edits to a temporary file, and then checks the file’s syntax before copying it to `/etc/sudoers`.)_
+The configuration file for `sudo` is `/etc/sudoers`.  We will need to edit this file to change the permissions of our newly created user.
+
+> ***Note:*** This file should always be edited with the `visudo` command.  The `visudo` command locks the `/etc/sudoers` file, saves edits to a temporary file, and then checks the file’s syntax before copying it to `/etc/sudoers`.)
 
 Set an editor for use when launching `visudo`.
 
@@ -657,7 +661,7 @@ If you thought swap partition sizes and text editors were controversial, they do
 
 Choose your desktop environment, perform the installation, and finalize the configuration.  If you are unsure about the options presented during the installation of your desktop environment of choice, choose the defaulted options.  Then, let's reconnect in the Summary section of this tutorial.
 
-_**NOTE:** KDE doesn’t allow the root user to login directly. You must initially login with the user account created in the previous section._
+> ***Note:*** KDE doesn’t allow the root user to login directly. You must initially login with the user account created in the previous section.
 
 ### GNOME
 Install the Xorg display server.
@@ -721,7 +725,7 @@ Install the GDM display manager.
 
 Enable the GDM display manager and Network Manager.
 
-_**NOTE:** During the login process, look for a settings (gear) icon.  This icon will allow you to choose the Cinammon desktop environment._
+> ***Note:*** During the login process, look for a settings (gear) icon.  This icon will allow you to choose the Cinammon desktop environment.
 
 ```
 [root@archiso /]# systemctl enable gdm.service
